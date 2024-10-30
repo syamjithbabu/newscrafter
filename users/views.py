@@ -8,3 +8,6 @@ def index(request):
 
 def profile(request):
     return render(request,'users/profile.html')
+
+def account(request):
+    return render(request,'users/account.html')
