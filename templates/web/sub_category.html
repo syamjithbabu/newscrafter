@@ -16,9 +16,28 @@
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="{% static 'web/css/style.css' %}"> 
 
+    <style>
+        .category-tag {
+            cursor: pointer;
+        }
 
+        .tag-content {
+            display: inline-block;
+            background-color: #f1f1f1;
+            color: #333;
+            border-radius: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .category-checkbox:checked + .tag-content {
+            background-color: #0073e6; /* Your chosen active color */
+            color: #fff;
+        }
+
+    </style>
 
 </head>
+
 
 <body class="color-theme-blue">
 
@@ -34,8 +53,6 @@
                 <a href="#" class="me-2 menu-search-icon mob-menu"><i class="feather-search text-grey-900 font-sm btn-round-md bg-greylight"></i></a>
                 <button class="nav-menu me-0 ms-2"></button>
 
-                <a href="#" class="header-btn d-none d-lg-block bg-dark fw-500 text-white font-xsss p-3 ms-auto w100 text-center lh-20 rounded-xl"  data-bs-toggle="modal" data-bs-target="#Modallogin">Login</a>
-                <a href="#" class="header-btn d-none d-lg-block bg-current fw-500 text-white font-xsss p-3 ms-2 w100 text-center lh-20 rounded-xl"  data-bs-toggle="modal" data-bs-target="#Modalregister">Register</a>
 
             </div>
             
@@ -47,46 +64,27 @@
             <div class="col-xl-7 vh-100 align-items-center d-flex bg-white rounded-3 overflow-hidden">
                 <div class="card shadow-none border-0 ms-auto me-auto login-card">
                     <div class="card-body rounded-0 text-left">
-                        <h2 class="fw-700 display1-size display2-md-size mb-4">Create <br>your account</h2>                        
+                        <h2 class="fw-700 display1-size display2-md-size mb-4">Select Sub Categories!</h2>
                         <form method="post">
                             {% csrf_token %}
                             
-                            <!-- Username Field -->
-                            <div class="form-group icon-input mb-3">
-                                <i class="font-sm ti-user text-grey-500 pe-0"></i>
-                                {{ form.username }}
-                            </div>
-                        
-                            <!-- Email Field -->
-                            <div class="form-group icon-input mb-3">
-                                <i class="font-sm ti-email text-grey-500 pe-0"></i>
-                                {{ form.email }}
-                            </div>
-                        
-                            <!-- Password Field -->
-                            <div class="form-group icon-input mb-3">
-                                {{ form.password1 }}
-                                <i class="font-sm ti-lock text-grey-500 pe-0"></i>
-                            </div>
-                        
-                            <!-- Confirm Password Field -->
-                            <div class="form-group icon-input mb-3">
-                                {{ form.password2 }}
-                                <i class="font-sm ti-lock text-grey-500 pe-0"></i>
-                            </div>
-                        
-                            <!-- Submit Button -->
-                            <div class="form-group mb-1">
-                                <button type="submit" class="form-control text-center style2-input text-white fw-600 bg-dark border-0 p-0">
-                                    Register
-                                </button>
+                            <div class="d-flex flex-wrap">
+                                {% for news_sub_category in news_sub_categories %}
+                                <label class="category-tag mx-1 mb-2">
+                                    <input type="checkbox" name="sub_categories" value="{{ news_sub_category.id }}" class="category-checkbox" style="display: none;">
+                                    <span class="tag-content px-3 py-2">{{ news_sub_category.sub_category_name }}</span>
+                                </label>
+                                {% endfor %}
                             </div>
                             
-                            <!-- Already have an account? -->
-                            <h6 class="text-grey-500 font-xsss fw-500 mt-0 mb-0 lh-32">
-                                Already have an account? <a href="{% url 'web:login' %}" class="fw-700 ms-1">Login</a>
-                            </h6>
+                            <!-- Submit Button -->
+                            <div class="form-group mt-4">
+                                <button type="submit" class="form-control text-center style2-input text-white fw-600 bg-dark border-0 p-0">
+                                    Next
+                                </button>
+                            </div>
                         </form>
+
                     </div>
                 </div> 
             </div>
@@ -189,7 +187,4 @@
     <script src="{% static 'web/js/scripts.js' %}"></script>
     
 </body>
-
-
-<!-- Mirrored from uitheme.net/sociala/{% url 'web:register' %} by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 30 Aug 2024 08:42:57 GMT -->
 </html>
