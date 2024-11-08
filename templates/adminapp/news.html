@@ -1,0 +1,31 @@
+{% extends 'adminapp/partials/base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="page-body">
+    <div class="container-fluid">
+
+    <h4>Today's News</h1>
+    <div class="news-list">
+        {% for news in all_news %}
+            <div class="news-item">
+                <h2><a href="{% url 'adminapp:detailed_news' slug=news.slug %}">{{ news.title }}</a></h2>
+                <div class="news-meta">
+                    <span>By {{ news.author }}</span> | 
+                    <span>Published on {{ news.date_published }}</span>
+                </div>
+                {% if news.image_url %}
+                    <img src="{{ news.image_url }}" alt="{{ news.title }}">
+                {% endif %}
+                <p class="summary">{{ news.content|truncatewords:30 }}</p>
+                <a class="read-more" href="{% url 'adminapp:detailed_news' slug=news.slug %}">Read More</a>
+            </div>
+        {% endfor %}
+    </div>
+
+    </div>
+
+</div>
+
+
+{% endblock %}

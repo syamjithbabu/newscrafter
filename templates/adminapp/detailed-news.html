@@ -1,0 +1,23 @@
+{% extends 'adminapp/partials/base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="page-body">
+    <div class="container-fluid">
+
+        <div class="news-detail">
+            <h2>{{ news.title }}</h2>
+            <div class="news-meta mt-4">
+                
+                <span>Published on {{ news.date_published }}</span>     
+            </div>
+            {% if news.image_url %}
+                <img src="{{ news.image_url }}" alt="{{ news.title }}" class="main-image">
+            {% endif %}
+            <p class="content mt-4">{{ news.content }}</p>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
