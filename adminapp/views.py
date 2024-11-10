@@ -1,22 +1,54 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render, redirect
 import requests
 from bs4 import BeautifulSoup
 from .models import NewsCategory, NewsSubCategory, NewsArticle
 import pytz
 from django.utils import timezone
+from web.models import CustomUser
+from django.contrib.auth import authenticate, login, logout
+from web.forms import RegistrationForm
+from django.contrib.auth.forms import AdminPasswordChangeForm
+from django.utils.text import slugify
 
 # Create your views here.
 
 def index(request):
-    return render(request,'adminapp/index.html')
+    news = NewsArticle.objects.filter(status=True).order_by('-id')
+    return render(request,'adminapp/index.html',{'all_news':news})
 
 def news(request):
-    news = NewsArticle.objects.filter().order_by('-id')
+    news = NewsArticle.objects.filter(status=True).order_by('-id')
     return render(request,'adminapp/news.html',{'all_news':news})
 
 def detailed_news(request,slug):
     news = NewsArticle.objects.get(slug=slug)
     return render(request,'adminapp/detailed-news.html',{'news':news})
+
+def user_articles(request):
+    news = NewsArticle.objects.filter(status=False)
+    print(news)
+    context = {
+        'all_news' : news
+    }
+    return render(request,'adminapp/user-articles.html',context)
+
+def accept_news(request,id):
+    article_update = NewsArticle.objects.filter(id=id).update(status=True)
+    return redirect('adminapp:user_articles')
+
+def reject_news(request,id):
+    article = get_object_or_404(NewsArticle,id=id)
+    article.delete()
+    return redirect('adminapp:user_articles')
+
+def accept_toi_news(request,id):
+    article_update = NewsArticle.objects.filter(id=id).update(status=True)
+    return redirect('adminapp:add_or_remove_news')
+
+def reject_toi_news(request,id):
+    article = get_object_or_404(NewsArticle,id=id)
+    article.delete()
+    return redirect('adminapp:add_or_remove_news')
 
 def add_news(request):
     news_links = fetch_news_links()
@@ -26,22 +58,34 @@ def add_news(request):
         article_data = fetch_full_article(link)
         all_news.append(article_data)
     
-    return render(request,'adminapp/add-news.html', {'all_news':all_news})
+    return redirect('adminapp:add_or_remove_news')
+
+def add_or_remove_news(request):
+    ist = pytz.timezone('Asia/Kolkata')
+    current_date = timezone.now().astimezone(ist).date()
+    all_news = NewsArticle.objects.filter(date_published=current_date,status=False)
+    context = {
+        'all_news' : all_news
+    }
+    return render(request,'adminapp/add-news.html',context)
 
 def fetch_news_links():
-    # URL of the main news briefs page
     url = "https://timesofindia.indiatimes.com/briefs"
     response = requests.get(url)
     soup = BeautifulSoup(response.content, 'html5lib')
 
-    # Find links to individual articles
     news_links = []
     sections = soup.find_all('div', class_='brief_box')
+    title_tag = soup.find('h2')
+    title_text = title_tag.get_text()  # Extract text from the HTML tag
+    slug = slugify(title_text)
     
     for section in sections:
+        if NewsArticle.objects.filter(slug=slug):
+            print("Already fetched")
+            continue
         link_tag = section.find('a')
         if link_tag and link_tag.get('href'):
-            # Construct the full URL and add to list
             full_url = "https://timesofindia.indiatimes.com" + link_tag['href']
             news_links.append(full_url)
     
@@ -68,21 +112,17 @@ def fetch_full_article(article_url):
 
     image_tag = soup.find('img', alt=title)
     image_url = image_tag['src'] if image_tag else None
-    
-    # Simulate category and subcategory extraction (you might need custom logic here)
-    category_name = determine_category(title)  # Placeholder function for category
-    sub_category_name = determine_sub_category(title)  # Placeholder function for sub-category
 
-    # Fetch or create the category
+    category_name = determine_category(title)
+    sub_category_name = determine_sub_category(title)
+
     category, created = NewsCategory.objects.get_or_create(category_name=category_name)
 
-    # Fetch or create the sub-category linked to the category
     sub_category, created = NewsSubCategory.objects.get_or_create(
         category=category,
         sub_category_name=sub_category_name
     )
 
-    # Save the article
     article, created = NewsArticle.objects.get_or_create(
         title=title,
         author=author,
@@ -90,7 +130,8 @@ def fetch_full_article(article_url):
         content=full_content,
         image_url=image_url,
         category=category,
-        sub_category=sub_category
+        sub_category=sub_category,
+        status=False
     )
 
     return {
@@ -121,3 +162,114 @@ def determine_sub_category(title):
     # Add more logic as needed
     return "General News"
 
+def add_category(request):
+    if request.method == 'POST':
+        category_name = request.POST.get('category_name')
+        new_category = NewsCategory.objects.create(category_name=category_name)
+        return redirect('adminapp:category_list')
+    return render(request,'adminapp/add-new-category.html')
+
+def category_list(request):
+    categories = NewsCategory.objects.filter().order_by('-id')
+    context = {
+        'categories' : categories
+    }
+    return render(request,'adminapp/category-list.html',context)
+
+def delete_category(request,id):
+    category = get_object_or_404(NewsCategory,id=id)
+    print(category)
+    category.delete()
+    return redirect('adminapp:category_list')
+
+def edit_category(request,id):
+    category = get_object_or_404(NewsCategory,id=id)
+    if request.method == 'POST':
+        category_name = request.POST.get('category_name')
+        new_category = NewsCategory.objects.filter(category_name=category).update(category_name=category_name)
+        return redirect('adminapp:category_list')
+    return render(request,'adminapp/edit-category.html',{'category':category})
+
+def sub_category_list(request):
+    sub_categories = NewsSubCategory.objects.filter().order_by('-id')
+    context = {
+        'sub_categories' : sub_categories
+    }
+    return render(request,'adminapp/sub-category-list.html',context)
+
+def add_sub_category(request):
+    categories = NewsCategory.objects.filter()
+    if request.method == 'POST':
+        category_name = request.POST.get('category')
+        category = get_object_or_404(NewsCategory,category_name=category_name)
+        sub_category_name = request.POST.get('sub_category_name')
+        new_sub_category = NewsSubCategory.objects.create(category=category,sub_category_name=sub_category_name)
+        return redirect('adminapp:sub_category_list')
+    context = {
+        'categories' : categories
+    }
+    return render(request,'adminapp/add-sub-category.html',context)
+
+def delete_sub_category(request,id):
+    sub_category = get_object_or_404(NewsSubCategory,id=id)
+    sub_category.delete()
+    return redirect('adminapp:sub_category_list')
+
+def edit_sub_category(request,id):
+    sub_category = get_object_or_404(NewsSubCategory,id=id)
+    if request.method == 'POST':
+        category = sub_category.category
+        sub_category_name = request.POST.get('sub_category_name')
+        edit_sub_category = NewsSubCategory.objects.filter(category=category,sub_category_name=sub_category.sub_category_name).update(sub_category_name=sub_category_name)
+        print(edit_sub_category,"SUb Category")
+        return redirect('adminapp:sub_category_list')
+    return render(request,'adminapp/edit-sub-category.html',{'sub_category':sub_category})
+
+def users(request):
+    users = CustomUser.objects.filter().exclude(username='admin')
+    print(users)
+    context = {
+        'users' : users
+    }
+    return render(request,'adminapp/users.html',context)
+
+def delete_user(request,id):
+    print(id)
+    user = get_object_or_404(CustomUser,id=id)
+    print(user)
+    user.delete()
+    return redirect('adminapp:users')
+
+def add_user(request):
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password1')
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('adminapp:users')
+    else:
+        form = RegistrationForm()
+    print(form)
+    context = {
+        'form' : form
+    }
+    return render(request,'adminapp/add-user.html',context)
+
+def edit_user(request,id):
+    user = get_object_or_404(CustomUser,id=id)
+    if request.method == 'POST':
+        form = AdminPasswordChangeForm(user=user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('adminapp:index')
+    else:
+        form = AdminPasswordChangeForm(user=user)
+    context = {
+        'form' : form
+    }
+    return render(request,'adminapp/edit-user.html',context)

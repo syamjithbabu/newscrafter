@@ -6,5 +6,8 @@ app_name = 'users'
 urlpatterns = [
     path('index',views.index,name="index"),
     path('profile',views.profile,name="profile"),
-    path('account',views.account,name="account")
+    path('account',views.account,name="account"),
+    path('view-news/<int:id>',views.view_news,name="view_news"),
+    path('new-article/',views.new_article,name="new_article"),
+    path('get-sub-categories/',views.sub_categories,name="sub_categories")
 ]

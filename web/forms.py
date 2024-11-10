@@ -25,7 +25,7 @@ class RegistrationForm(forms.ModelForm):
     email = forms.EmailField(
         widget=forms.EmailInput(attrs={
             'class': 'style2-input ps-5 form-control text-grey-900 font-xsss fw-600',
-            'placeholder': 'Your Email Address'
+            'placeholder': 'Email Address'
         })
     )
     password1 = forms.CharField(

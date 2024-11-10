@@ -1,0 +1,74 @@
+{% extends 'adminapp/partials/base.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Container-fluid starts-->
+<div class="page-body">
+    <!-- All User Table Start -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card card-table">
+                    <div class="card-body">
+                        <div class="title-header option-title">
+                            <h5>All Sub Category</h5>
+                            <form class="d-inline-flex">
+                                <a href="{% url 'adminapp:add_category' %}"
+                                    class="align-items-center btn btn-theme d-flex">
+                                    <i data-feather="plus-square"></i>Add New
+                                </a>
+                            </form>
+                        </div>
+
+                        <div class="table-responsive category-table">
+                            <div>
+                                <table class="table all-package theme-table" id="table_id">
+                                    <thead>
+                                        <tr>
+                                            <th>Sub Category Name</th>
+                                            <th>Category</th>
+                                            <th>Option</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        {% for sub_category in sub_categories %}
+                                        <tr>
+                                            <td>{{sub_category.sub_category_name}}</td>
+                                            <td>{{sub_category.category}}</td>
+
+                                            <td>
+                                                <ul>
+                                                 
+
+                                                    <li>
+                                                        <a href="{% url 'adminapp:edit_sub_category' sub_category.id %}">
+                                                            <i class="ri-pencil-line"></i>
+                                                        </a>
+                                                    </li>
+
+                                                    <li>
+                                                        <a href="{% url 'adminapp:delete_sub_category' sub_category.id %}">
+                                                            <i class="ri-delete-bin-line"></i>
+                                                        </a>
+                                                    </li>
+
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- All User Table Ends-->
+
+</div>
+<!-- Container-fluid end -->
+
+{% endblock %}

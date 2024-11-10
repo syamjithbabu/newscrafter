@@ -1,1 +1,32 @@
-<h1>Gi</h1>
+{% extends 'adminapp/partials/base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="page-body">
+    <div class="container-fluid">
+
+    <h4>Today's News</h1>
+    <div class="news-list">
+        {% for news in all_news %}
+            <div class="news-item">
+                <h2><a href="{% url 'adminapp:detailed_news' slug=news.slug|slugify %}">{{ news.title }}</a></h2>
+                <div class="news-meta">
+                    <span>By {{ news.author }}</span> | 
+                    <span>Published on {{ news.date_published }}</span>
+                </div>
+                {% if news.image_url %}
+                    <img src="{{ news.image_url }}" alt="{{ news.title }}">
+                {% endif %}
+                <p class="summary">{{ news.content|truncatewords:30 }}</p>
+                <a class="read-more" href="{% url 'adminapp:detailed_news' slug=news.slug|slugify %}">Read More</a>
+                <a href="{% url 'adminapp:accept_toi_article' news.id %}"><button>Accept</button></a>
+                <a href="{% url 'adminapp:reject_toi_article' news.id %}"><button>Reject</button></a>
+            </div>
+        {% endfor %}
+    </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

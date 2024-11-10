@@ -50,7 +50,10 @@
                                 </li>
 
                                 <li>
-                                    <a href="{% url 'adminapp:add_news' %}">Add Latest News</a>
+                                    <a href="{% url 'adminapp:add_or_remove_news' %}">Add News</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'adminapp:user_articles' %}">User Articles</a>
                                 </li>
                             </ul>
                         </li>
@@ -62,30 +65,32 @@
                             </a>
                             <ul class="sidebar-submenu">
                                 <li>
-                                    <a href="category.html">Category List</a>
+                                    <a href="{% url 'adminapp:category_list' %}">Category List</a>
                                 </li>
 
                                 <li>
-                                    <a href="add-new-category.html">Add New Category</a>
+                                    <a href="{% url 'adminapp:add_category' %}">Add New Category</a>
                                 </li>
                             </ul>
                         </li>
 
                         <li class="sidebar-list">
                             <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
-                                <i class="ri-list-settings-line"></i>
-                                <span>Attributes</span>
+                                <i class="ri-list-check-2"></i>
+                                <span>Sub Category</span>
                             </a>
                             <ul class="sidebar-submenu">
                                 <li>
-                                    <a href="attributes.html">Attributes</a>
+                                    <a href="{% url 'adminapp:sub_category_list' %}">Sub Category List</a>
                                 </li>
 
                                 <li>
-                                    <a href="add-new-attributes.html">Add Attributes</a>
+                                    <a href="{% url 'adminapp:add_sub_category' %}">Add New Sub Category</a>
                                 </li>
                             </ul>
                         </li>
+
+                     
 
                         <li class="sidebar-list">
                             <a class="sidebar-link sidebar-title" href="javascript:void(0)">
@@ -94,85 +99,16 @@
                             </a>
                             <ul class="sidebar-submenu">
                                 <li>
-                                    <a href="all-users.html">All users</a>
+                                    <a href="{% url 'adminapp:users' %}">All users</a>
                                 </li>
                                 <li>
-                                    <a href="add-new-user.html">Add new user</a>
+                                    <a href="{% url 'adminapp:add_user' %}">Add new user</a>
                                 </li>
                             </ul>
                         </li>
 
-                        <li class="sidebar-list">
-                            <a class="sidebar-link sidebar-title" href="javascript:void(0)">
-                                <i class="ri-user-3-line"></i>
-                                <span>Roles</span>
-                            </a>
-                            <ul class="sidebar-submenu">
-                                <li>
-                                    <a href="role.html">All roles</a>
-                                </li>
-                                <li>
-                                    <a href="create-role.html">Create Role</a>
-                                </li>
-                            </ul>
-                        </li>
+                    
 
-                        <li class="sidebar-list">
-                            <a class="sidebar-link sidebar-title link-nav" href="media.html">
-                                <i class="ri-price-tag-3-line"></i>
-                                <span>Media</span>
-                            </a>
-                        </li>
-
-                        <li class="sidebar-list">
-                            <a class="sidebar-link sidebar-title" href="javascript:void(0)">
-                                <i class="ri-archive-line"></i>
-                                <span>Orders</span>
-                            </a>
-                            <ul class="sidebar-submenu">
-                                <li>
-                                    <a href="order-list.html">Order List</a>
-                                </li>
-                                <li>
-                                    <a href="order-detail.html">Order Detail</a>
-                                </li>
-                                <li>
-                                    <a href="order-tracking.html">Order Tracking</a>
-                                </li>
-                            </ul>
-                        </li>
-
-                        <li class="sidebar-list">
-                            <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
-                                <i class="ri-focus-3-line"></i>
-                                <span>Localization</span>
-                            </a>
-                            <ul class="sidebar-submenu">
-                                <li>
-                                    <a href="translation.html">Translation</a>
-                                </li>
-
-                                <li>
-                                    <a href="currency-rates.html">Currency Rates</a>
-                                </li>
-                            </ul>
-                        </li>
-
-                        <li class="sidebar-list">
-                            <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
-                                <i class="ri-price-tag-3-line"></i>
-                                <span>Coupons</span>
-                            </a>
-                            <ul class="sidebar-submenu">
-                                <li>
-                                    <a href="coupon-list.html">Coupon List</a>
-                                </li>
-
-                                <li>
-                                    <a href="create-coupon.html">Create Coupon</a>
-                                </li>
-                            </ul>
-                        </li>
 
                         <li class="sidebar-list">
                             <a class="sidebar-link sidebar-title link-nav" href="taxes.html">

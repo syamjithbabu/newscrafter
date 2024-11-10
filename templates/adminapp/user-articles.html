@@ -5,7 +5,7 @@
 <div class="page-body">
     <div class="container-fluid">
 
-    <h4>Today's News</h1>
+    <h4>User article requests</h1>
     <div class="news-list">
         {% for news in all_news %}
             <div class="news-item">
@@ -19,6 +19,8 @@
                 {% endif %}
                 <p class="summary">{{ news.content|truncatewords:30 }}</p>
                 <a class="read-more" href="{% url 'adminapp:detailed_news' slug=news.slug|slugify %}">Read More</a>
+                <a href="{% url 'adminapp:accept_article' news.id %}"><button>Accept</button></a>
+                <a href="{% url 'adminapp:reject_article' news.id %}"><button>Reject</button></a>
             </div>
         {% endfor %}
     </div>

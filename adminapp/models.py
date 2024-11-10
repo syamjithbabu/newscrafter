@@ -19,12 +19,13 @@ class NewsSubCategory(models.Model):
 class NewsArticle(models.Model):
     title = models.CharField(max_length=255)
     author = models.CharField(max_length=255, null=True, blank=True)
-    date_published = models.DateTimeField(null=True, blank=True)
+    date_published = models.DateField(null=True, blank=True)
     content = models.TextField()
     image_url = models.URLField(null=True, blank=True)
     category = models.ForeignKey(NewsCategory, on_delete=models.SET_NULL, null=True)
     sub_category = models.ForeignKey(NewsSubCategory, on_delete=models.SET_NULL, null=True, blank=True)
     slug = models.SlugField(max_length=255, unique=True)
+    status = models.BooleanField(null=False)
 
     def __str__(self):
         return self.title

@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import authenticate, login, logout
 import requests
 from django.utils import timezone
@@ -6,10 +6,16 @@ from bs4 import BeautifulSoup
 import re
 from adminapp.models import NewsCategory, NewsSubCategory, NewsArticle
 from .models import MyCategory, MySubCategory
+from django.http import JsonResponse
+from pytz import timezone as pytz_timezone
+import pytz
 
 # Create your views here.
 
 def index(request):
+    ist = pytz.timezone('Asia/Kolkata')
+    current_date = timezone.now().astimezone(ist).date()
+
     user = request.user
 
     user_sub_category_ids = MySubCategory.objects.filter(user=user.id).values_list('sub_category', flat=True)
@@ -17,7 +23,7 @@ def index(request):
     user_sub_categories = NewsSubCategory.objects.filter(id__in=user_sub_category_ids)
     
     # Filter NewsArticles based on the user's subcategories
-    news_articles = NewsArticle.objects.filter(sub_category__in=user_sub_categories).order_by('-id')
+    news_articles = NewsArticle.objects.filter(sub_category__in=user_sub_categories,date_published=current_date,status=True).order_by('-id')[:4]
 
     print(news_articles)
 
@@ -32,3 +38,41 @@ def profile(request):
 
 def account(request):
     return render(request,'users/account.html')
+
+def view_news(request,id):
+    news = get_object_or_404(NewsArticle,id=id)
+    context = {
+        'news' : news
+    }
+    return render(request,'users/view-news.html',context)
+
+
+def new_article(request):
+    ist = pytz.timezone('Asia/Kolkata')
+    current_date = timezone.now().astimezone(ist).date()
+    categories = NewsCategory.objects.filter().all()
+    sub_categories = NewsSubCategory.objects.filter().all()
+    user = request.user
+    if request.method == 'POST':
+        category_id = request.POST.get('category')
+        sub_category_id = request.POST.get('sub-category')
+        title = request.POST.get('title')
+        image = request.POST.get('image')
+        content = request.POST.get('content')
+        category = get_object_or_404(NewsCategory,id=category_id)
+        sub_category = get_object_or_404(NewsSubCategory,id=sub_category_id)
+        add_article = NewsArticle.objects.create(author=user,date_published=current_date,image_url=image,category=category,sub_category=sub_category,title=title,content=content,status=False)
+    context = {
+        'categories' : categories,
+        'sub_categories' : sub_categories
+    }
+    return render(request,'users/new-article.html',context)
+
+def sub_categories(request):
+    print("hello")
+    category_id = request.GET.get('category_id')
+    category_instance = NewsCategory.objects.get(id=category_id)
+    print(category_instance)
+    sub_categories = NewsSubCategory.objects.filter(category=category_instance).values('id', 'sub_category_name')
+    print(sub_categories)
+    return JsonResponse({'sub_categories': list(sub_categories)})
