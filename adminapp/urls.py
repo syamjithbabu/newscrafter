@@ -7,6 +7,7 @@ urlpatterns = [
     path('index/',views.index,name="index"),
     path('news/',views.news,name="news"),
     path('add-or-remove-news/',views.add_or_remove_news,name="add_or_remove_news"),
+    path('add-news/',views.add_news,name="add_news"),
     path('detailed-news/<slug:slug>',views.detailed_news,name="detailed_news"),
     path('add-category/',views.add_category,name="add_category"),
     path('category-list/',views.category_list,name="category_list"),
