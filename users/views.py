@@ -24,7 +24,7 @@ def index(request):
     user_sub_categories = NewsSubCategory.objects.filter(id__in=user_sub_category_ids)
     
     # Filter NewsArticles based on the user's subcategories
-    news_articles = NewsArticle.objects.filter(sub_category__in=user_sub_categories,date_published=current_date,status=True).order_by('-id')[:4]
+    news_articles = NewsArticle.objects.filter(sub_category__in=user_sub_categories,date_published=current_date,status=True).order_by('-id')
 
     print(news_articles)
 
@@ -60,7 +60,7 @@ def new_article(request):
         category_id = request.POST.get('category')
         sub_category_id = request.POST.get('sub-category')
         title = request.POST.get('title')
-        image = request.POST.get('image')
+        image = request.FILES.get('image')
         content = request.POST.get('content')
         category = get_object_or_404(NewsCategory,id=category_id)
         sub_category = get_object_or_404(NewsSubCategory,id=sub_category_id)

@@ -12,7 +12,9 @@
                 <span>Published on {{ news.date_published }}</span>     
             </div>
             {% if news.image_url %}
-                <img src="{{ news.image_url }}" alt="{{ news.title }}" class="main-image">
+            <img src="{{ news.image_url }}" alt="{{ news.title }}">
+            {% elif news.image %}
+                <img src="{{news.image.url}}" style="width: 400px; height: 225px; object-fit: cover;" alt="{{ news.title }}">
             {% endif %}
             <p class="content mt-4">{{ news.content }}</p>
         </div>

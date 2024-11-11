@@ -158,7 +158,11 @@
                                 </div>
                                 <div class="card-body d-block p-0">
                                     <div class="row ps-2 pe-2">
+                                        {% if news.image_url %}
                                         <div class="col-xs-4 col-sm-4 p-1"><a href="{% static 'users/images/t-10.jpg' %}" data-lightbox="roadtrip"><img src="{{news.image_url}}" class="rounded-3 w-100" alt="image"></a></div>
+                                        {% elif news.image %}
+                                        <div class="col-xs-4 col-sm-4 p-1"><a href="{% static 'users/images/t-10.jpg' %}" data-lightbox="roadtrip"><img src="{{news.image.url}}"  style="width: 400px; height: 225px; object-fit: cover;" class="rounded-3 w-100" alt="image"></a></div>
+                                        {% endif %}
 
                                     </div>
                                 </div>
