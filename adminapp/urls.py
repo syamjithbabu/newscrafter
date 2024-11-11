@@ -9,6 +9,7 @@ urlpatterns = [
     path('add-or-remove-news/',views.add_or_remove_news,name="add_or_remove_news"),
     path('add-news/',views.add_news,name="add_news"),
     path('detailed-news/<slug:slug>',views.detailed_news,name="detailed_news"),
+    path('detailed-news-2/<slug:slug>',views.detailed_news_two,name="detailed_news_two"),
     path('add-category/',views.add_category,name="add_category"),
     path('category-list/',views.category_list,name="category_list"),
     path('delete-category/<int:id>',views.delete_category,name="delete_category"),
@@ -25,5 +26,7 @@ urlpatterns = [
     path('accept-article/<int:id>',views.accept_news,name="accept_article"),
     path('reject-article/<int:id>',views.reject_news,name="reject_article"),
     path('accept-toi-article/<int:id>',views.accept_toi_news,name="accept_toi_article"),
-    path('reject-toi-article/<int:id>',views.reject_toi_news,name="reject_toi_article")
+    path('reject-toi-article/<int:id>',views.reject_toi_news,name="reject_toi_article"),
+    path('accept-all/',views.accept_all,name="accept_all"),
+    path('search/',views.search,name="search")
 ]

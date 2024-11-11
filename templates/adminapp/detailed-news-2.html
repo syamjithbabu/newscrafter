@@ -1,0 +1,25 @@
+{% extends 'adminapp/partials/base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="page-body">
+    <div class="container-fluid">
+
+        <div class="news-detail">
+            <h2>{{ news.title }}</h2>
+            <div class="news-meta mt-4">
+                
+                <span>Published on {{ news.date_published }}</span>     
+            </div>
+            {% if news.image_url %}
+                <img src="{{ news.image_url }}" alt="{{ news.title }}" class="main-image">
+            {% endif %}
+            <p class="content mt-4">{{ news.content }}</p>
+        </div>
+        <a href="{% url 'adminapp:accept_toi_article' news.id %}"><button>Accept</button></a>
+        <a href="{% url 'adminapp:reject_toi_article' news.id %}"><button>Reject</button></a>
+
+    </div>
+</div>
+
+{% endblock %}

@@ -40,7 +40,7 @@
                 <button class="nav-menu me-0 ms-2"></button>
             </div>
             
-            <form action="#" class="float-left header-search">
+            <form action="{% url 'users:search' %}" method="get" class="float-left header-search">
                 <div class="form-group mb-0 icon-input">
                     <i class="feather-search font-sm text-grey-400"></i>
                     <input type="text" placeholder="Start typing to search.." class="bg-grey border-0 lh-32 pt-2 pb-2 ps-5 pe-3 font-xssss fw-500 rounded-xl w350 theme-dark-bg">
@@ -188,6 +188,7 @@
         </div>
         <!-- navigation top -->
 
+        <!-- navigation left -->
         <nav class="navigation scroll-bar">
             <div class="container ps-0 pe-0">
                 <div class="nav-content">
@@ -205,6 +206,7 @@
                 </div>
             </div>
         </nav>
+        <!-- navigation left -->
         <!-- main content -->
         <div class="main-content right-chat-active">
             
@@ -241,7 +243,8 @@
                     <div class="row feed-body">
                         <div class="col-xl-12 col-xxl-12 col-lg-8">
 
-                           
+                            {% if news_articles %}
+                            {% for news in news_articles %}
                             <div class="card w-100 shadow-xss rounded-xxl border-0 p-4 mb-3">
                                 <div class="card-body p-0 d-flex">
                                     <h4 class="fw-700 text-grey-900 font-xssss mt-1">{{news.sub_category}}  <span class="d-block font-xssss fw-500 mt-1 lh-3 text-grey-500">{{news.date_published}}</span></h4>
@@ -273,10 +276,11 @@
                                 </div>
                                 <div class="card-body p-0 me-lg-5">
                                     <h2>{{news.title}}</h2>
-                                    <p class="fw-500 lh-26 font-xssss w-100">{{news.content}}</a></p>
+                                    <p class="fw-500 lh-26 font-xssss w-100">{{news.content|truncatewords:30}}</a><a href="{% url 'users:view_news' news.id %}">Read more...</a></p>
                                 </div>
                                 
                                 <div class="card-body d-flex p-0 mt-3">
+      
                                     <div class="emoji-wrap">
                                         <ul class="emojis list-inline mb-0">
                                             <li class="emoji list-inline-item"><i class="em em---1"></i> </li>
@@ -290,12 +294,39 @@
                                         </ul>
                                     </div>
                                     
-                                     
-                                    <a href="whatsapp://send?text=Check out this article: {{ news.title }} - {{ share_url }}" data-bs-toggle="dropdown" aria-expanded="false" class="ms-auto d-flex align-items-center fw-600 text-grey-900 text-dark lh-26 font-xssss"><i class="feather-share-2 text-grey-900 text-dark btn-round-sm font-lg"></i><span class="d-none-xs">Share</span></a>
-                                    
+                                    <a href="#" id="dropdownMenu21" data-bs-toggle="dropdown" aria-expanded="false" class="ms-auto d-flex align-items-center fw-600 text-grey-900 text-dark lh-26 font-xssss"><i class="feather-share-2 text-grey-900 text-dark btn-round-sm font-lg"></i><span class="d-none-xs">Share</span></a>
+                                    <div class="dropdown-menu dropdown-menu-end p-4 rounded-xxl border-0 shadow-lg" aria-labelledby="dropdownMenu21">
+                                        <h4 class="fw-700 font-xss text-grey-900 d-flex align-items-center">Share <i class="feather-x ms-auto font-xssss btn-round-xs bg-greylight text-grey-900 me-2"></i></h4>
+                                        <div class="card-body p-0 d-flex">
+                                            <ul class="d-flex align-items-center justify-content-between mt-2">
+                                                <li class="me-1"><a href="#" class="btn-round-lg bg-whatsapp"><i class="fab fa-whatsapp text-white"></i></a></li>
+                                                <li class="me-1"><a href="#" class="btn-round-lg bg-facebook"><i class="font-xs ti-facebook text-white"></i></a></li>
+                                                <li class="me-1"><a href="#" class="btn-round-lg bg-twiiter"><i class="font-xs ti-twitter-alt text-white"></i></a></li>
+                                                <li class="me-1"><a href="#" class="btn-round-lg bg-linkedin"><i class="font-xs ti-linkedin text-white"></i></a></li>
+                                                <li class="me-1"><a href="#" class="btn-round-lg bg-instagram"><i class="font-xs ti-instagram text-white"></i></a></li>
+ 
+                                            </ul>
+                                        </div>
+                                        <div class="card-body p-0 d-flex">
+                                            <ul class="d-flex align-items-center justify-content-between mt-2">
+                                                <li class="me-1"><a href="#" class="btn-round-lg bg-tumblr"><i class="font-xs ti-tumblr text-white"></i></a></li>
+                                                <li class="me-1"><a href="#" class="btn-round-lg bg-youtube"><i class="font-xs ti-youtube text-white"></i></a></li>
+                                                <li class="me-1"><a href="#" class="btn-round-lg bg-flicker"><i class="font-xs ti-flickr text-white"></i></a></li>
+                                                <li class="me-1"><a href="#" class="btn-round-lg bg-black"><i class="font-xs ti-vimeo-alt text-white"></i></a></li>
+                                                <li><a href="#" class="btn-round-lg bg-whatsup"><i class="font-xs feather-phone text-white"></i></a></li>
+                                            </ul>
+                                        </div>
+                                        <h4 class="fw-700 font-xssss mt-4 text-grey-500 d-flex align-items-center mb-3">Copy Link</h4>
+                                        <i class="feather-copy position-absolute right-35 mt-3 font-xs text-grey-500"></i>
+                                        <input type="text" value="https://socia.be/1rGxjoJKVF0" class="bg-grey text-grey-500 font-xssss border-0 lh-32 p-2 font-xssss fw-600 rounded-3 w-100 theme-dark-bg">
+                                    </div>
                                 </div>
                             </div>
-                         
+                            {% endfor %}
+                            {% else %}
+                                <p>No news available for today.</p>
+                            {% endif %}
+                          
 
                         </div>               
                         

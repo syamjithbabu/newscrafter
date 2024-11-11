@@ -39,10 +39,12 @@ def profile(request):
 def account(request):
     return render(request,'users/account.html')
 
-def view_news(request,id):
-    news = get_object_or_404(NewsArticle,id=id)
+def view_news(request,slug):
+    news = get_object_or_404(NewsArticle,slug=slug)
+    share_url = 'http://127.0.0.1:8000/'
     context = {
-        'news' : news
+        'news' : news,
+        'share_url' : share_url
     }
     return render(request,'users/view-news.html',context)
 
@@ -62,6 +64,7 @@ def new_article(request):
         category = get_object_or_404(NewsCategory,id=category_id)
         sub_category = get_object_or_404(NewsSubCategory,id=sub_category_id)
         add_article = NewsArticle.objects.create(author=user,date_published=current_date,image_url=image,category=category,sub_category=sub_category,title=title,content=content,status=False)
+
     context = {
         'categories' : categories,
         'sub_categories' : sub_categories
@@ -76,3 +79,26 @@ def sub_categories(request):
     sub_categories = NewsSubCategory.objects.filter(category=category_instance).values('id', 'sub_category_name')
     print(sub_categories)
     return JsonResponse({'sub_categories': list(sub_categories)})
+
+def search(request):
+    ist = pytz.timezone('Asia/Kolkata')
+    current_date = timezone.now().astimezone(ist).date()
+    query = request.GET.get('q')
+    print(query)
+    user = request.user
+
+    user_sub_category_ids = MySubCategory.objects.filter(user=user.id).values_list('sub_category', flat=True)
+
+    user_sub_categories = NewsSubCategory.objects.filter(id__in=user_sub_category_ids)
+    if query:
+        search_results = NewsArticle.objects.filter(sub_category__in=user_sub_categories,date_published=current_date,title__icontains=query, status=True) | \
+                         NewsArticle.objects.filter(sub_category__in=user_sub_categories,date_published=current_date,content__icontains=query, status=True)
+        print(search_results)
+    else:
+        search_results = NewsArticle.objects.none()
+
+    context = {
+        'news_articles': search_results,
+        'query': query,
+    }
+    return render(request, 'users/search.html', context)

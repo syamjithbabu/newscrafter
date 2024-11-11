@@ -24,8 +24,12 @@ def detailed_news(request,slug):
     news = NewsArticle.objects.get(slug=slug)
     return render(request,'adminapp/detailed-news.html',{'news':news})
 
+def detailed_news_two(request,slug):
+    news = NewsArticle.objects.get(slug=slug)
+    return render(request,'adminapp/detailed-news-2.html',{'news':news})
+
 def user_articles(request):
-    news = NewsArticle.objects.filter(status=False)
+    news = NewsArticle.objects.filter(status=False).exclude(author='Unknown author')
     print(news)
     context = {
         'all_news' : news
@@ -63,7 +67,7 @@ def add_news(request):
 def add_or_remove_news(request):
     ist = pytz.timezone('Asia/Kolkata')
     current_date = timezone.now().astimezone(ist).date()
-    all_news = NewsArticle.objects.filter(date_published=current_date,status=False)
+    all_news = NewsArticle.objects.filter(date_published=current_date, status=False).order_by('-id')
     context = {
         'all_news' : all_news
     }
@@ -91,13 +95,17 @@ def fetch_news_links():
     
     return news_links
 
-
 def fetch_full_article(article_url):
     response = requests.get(article_url)
     soup = BeautifulSoup(response.content, 'html5lib')
     
     title_tag = soup.find('h1')
     title = title_tag.text.strip() if title_tag else "No title"
+    
+    # Check if an article with the same title already exists
+    if NewsArticle.objects.filter(title=title).exists():
+        print(f"Article with title '{title}' already exists. Skipping.")
+        return None
 
     author_tag = soup.find('span', class_='auth_detail')
     author = author_tag.text.strip() if author_tag else "Unknown author"
@@ -143,6 +151,7 @@ def fetch_full_article(article_url):
         'category': category.category_name,
         'sub_category': sub_category.sub_category_name
     }
+
 
 def determine_category(title):
     # Placeholder function for extracting category based on title or other criteria
@@ -273,3 +282,26 @@ def edit_user(request,id):
         'form' : form
     }
     return render(request,'adminapp/edit-user.html',context)
+
+def accept_all(request):
+    ist = pytz.timezone('Asia/Kolkata')
+    current_date = timezone.now().astimezone(ist).date()
+    all_news = NewsArticle.objects.filter(date_published=current_date,author='Unknown author',status=False)
+    all_news.update(status=True)
+    return redirect('adminapp:add_or_remove_news')
+
+def search(request):
+    query = request.GET.get('q')
+    print(query)
+    if query:
+        search_results = NewsArticle.objects.filter(title__icontains=query, status=True) | \
+                         NewsArticle.objects.filter(content__icontains=query, status=True)
+        print(search_results)
+    else:
+        search_results = NewsArticle.objects.none()
+
+    context = {
+        'all_news': search_results,
+        'query': query,
+    }
+    return render(request, 'adminapp/search.html', context)
