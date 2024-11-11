@@ -17,8 +17,21 @@
     <link rel="stylesheet" href="{% static 'web/css/style.css' %}"> 
 
     <style>
+        body {
+            overflow-y: auto; /* Enable scrolling if content overflows */
+        }
         .category-tag {
             cursor: pointer;
+        }
+
+        .vh-100 {
+            min-height: 100vh; /* Ensures the element takes at least the full viewport height */
+            overflow-y: auto;   /* Adds vertical scrolling when content overflows */
+        }
+
+        .card-body {
+            max-height: calc(100vh - 100px); /* Adjust this value based on your layout */
+            overflow-y: auto; /* Allows scrolling when content overflows */
         }
 
         .tag-content {

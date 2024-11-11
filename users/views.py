@@ -9,6 +9,7 @@ from .models import MyCategory, MySubCategory
 from django.http import JsonResponse
 from pytz import timezone as pytz_timezone
 import pytz
+from django.utils.text import slugify
 
 # Create your views here.
 
@@ -63,7 +64,7 @@ def new_article(request):
         content = request.POST.get('content')
         category = get_object_or_404(NewsCategory,id=category_id)
         sub_category = get_object_or_404(NewsSubCategory,id=sub_category_id)
-        add_article = NewsArticle.objects.create(author=user,date_published=current_date,image_url=image,category=category,sub_category=sub_category,title=title,content=content,status=False)
+        add_article = NewsArticle.objects.create(author=user,date_published=current_date,image=image,category=category,sub_category=sub_category,title=title,content=content,status=False)
 
     context = {
         'categories' : categories,

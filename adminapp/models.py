@@ -22,6 +22,7 @@ class NewsArticle(models.Model):
     date_published = models.DateField(null=True, blank=True)
     content = models.TextField()
     image_url = models.URLField(null=True, blank=True)
+    image = models.ImageField(upload_to='product_images/',null=True)
     category = models.ForeignKey(NewsCategory, on_delete=models.SET_NULL, null=True)
     sub_category = models.ForeignKey(NewsSubCategory, on_delete=models.SET_NULL, null=True, blank=True)
     slug = models.SlugField(max_length=255, unique=True)

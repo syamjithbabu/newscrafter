@@ -16,7 +16,10 @@
                 </div>
                 {% if news.image_url %}
                     <img src="{{ news.image_url }}" alt="{{ news.title }}">
+                {% elif news.image %}
+                    <img src="{{ news.image.url }}" alt="{{ news.title }}">
                 {% endif %}
+
                 <p class="summary">{{ news.content|truncatewords:30 }}</p>
                 <a class="read-more" href="{% url 'adminapp:detailed_news' slug=news.slug|slugify %}">Read More</a>
                 <a href="{% url 'adminapp:accept_article' news.id %}"><button>Accept</button></a>
